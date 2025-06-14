@@ -6,8 +6,8 @@ class Bitcask:
     def __init__(self, directory):
         self._dir = directory
         
-        if not os.path.exisits(self._dir):
-            os.makredirs(self._dir)
+        if not os.path.exists(self._dir):
+            os.makedirs(self._dir)
             
         self._active_file = None
         self._key_dir = {}
@@ -39,7 +39,7 @@ class Bitcask:
     """    
     def _load_keydir(self):
         
-        for filename in sorted[os.listdir(self._dir)]:
+        for filename in sorted(os.listdir(self._dir)):
             if filename.endswith('.dat'):
                 filepath = os.path.join(self._dir, filename)
                 with open(filepath, 'rb') as f:
@@ -72,24 +72,23 @@ class Bitcask:
             return None
         
         filepath, offset, value_size = self._key_dir[key]
-        with open(filepath, 'rd') as f:
+        with open(filepath, 'rb') as f:
             f.seek(offset)
             return f.read(value_size)
         
     def put(self, key, value):
         if self._active_file is None:
-            self._active_file = self.__delattr___create_new_file()
+            self._active_file = self._create_new_file()
             
         key_bytes = key.encode('utf-8')    
         key_size = len(key_bytes)
-        value_bytes = value.encode('utf-8')
         value_size = len(value)
         
         timestamp = 0
         header = struct.pack('>III', timestamp, key_size, value_size)
         
         with open(self._active_file, 'ab') as f:
-            offset = f.tell
+            offset = f.tell()
             f.write(header)
             f.write(key_bytes)
             f.write(value)
